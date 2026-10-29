@@ -11,21 +11,23 @@ t = 0.5           #wall thickness (m)
 
 #Material props 
 E = 40e9          #young modulus (Pa)
-MU = 300000       #Mass per unit height (kg/m)
+MU = 300000       #Mass metre (height) (kg/m)
 G = 9.81          #Gravity (ms^-2)
 
 # Uniform wind load (Kyle's part) 
-F = 100000    #Distributed lateral load (N/m)
+F = 100000    #Lateral force per metre (N/m)
+
+I = (B * D**3 - (B - 2*t) * (D - 2*t)**3) / 12
 
 z = np.linspace(0, H, 500)
 y = np.zeros((4, len(z)))
 
 def q(z):
     """Wind force at height z"""
+
     return F
 
 #hollow rectangle sma
-I = (B * D**3 - (B - 2*t) * (D - 2*t)**3) / 12
 
 def P(z):
     """Axial force per unit height"""
@@ -33,7 +35,7 @@ def P(z):
 
 def U4d_calc(z, U1d, U2d):
     """Fourth derivative"""
-    return (F + MU * G * U1d - P(z) * U2d)/(E * I)
+    return (q(z) + MU * G * U1d - P(z) * U2d)/(E * I)
 
 def equations(z, y):
     U1d = y[1]
@@ -61,10 +63,10 @@ plt.plot(d, z)
 plt.xlabel('Horizontal deflection (m)')
 plt.ylabel('Height (m)')
 plt.title("Building deflection")
-plt.xlim(-200, 200)
+plt.xlim(-100, 100)
 plt.legend(title = (f'Horizontal deflection at roof is {d[-1]} meters',
            f'Horizontal deflection at Midpoint is {d[int(len(d)/2)]} meters'))
-plt.plot(np.zeros(len(z)), z)
+plt.plot(np.zeros(len(z)), z, label = 'centreline', alpha = 0.5, color = 'grey')
 
 plt.show()
 
