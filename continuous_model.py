@@ -22,10 +22,36 @@ I = (B * D**3 - (B - 2*t) * (D - 2*t)**3) / 12
 z = np.linspace(0, H, 500)
 y = np.zeros((4, len(z)))
 
+# Non-uniform wind speed, pressure and force for rectangular building
 def q(z):
     """Wind force at height z"""
+# Non-uniform wind load 
+V_REF = 8        # Measured wind speed at reference height (changes with different wind conditions) [m/s]
+H_REF = 10        # Reference height h1 (m)
+Z0 = 1.6          # Roughness length for urban skyscrapers (m)
+RHO = 1.225       # Air density (kg/m^3)
+GF = 0.887        # Gust factor
 
-    return F
+def wind_speed(z):
+    """Log wind profile: v(h2) = v(h1) * ln(h2/z0) / ln(h1/z0)"""
+    z_safe = np.maximum(z, Z0)   # avoids ln(0) at the foundation
+    return V_REF * np.log(z_safe / Z0) / np.log(H_REF / Z0) # Wind speed at z
+
+def Cp(z):
+    """Pressure coefficient: rises to 0.8 at 75% height, then falls to 0.4 at the roof"""
+    return np.where(
+        z <= 0.75 * H,
+        0.40 + 0.40 * (z / (0.75 * H)),
+        0.80 - 0.40 * ((z - 0.75 * H) / (0.25 * H))
+    )
+
+def pressure(z):
+    """Wind pressure p(z) in Pa"""
+    return 0.5 * RHO * wind_speed(z)**2 * GF * Cp(z) # Pressure Formula
+
+def q(z):
+    """Wind force per metre of height (N/m) = pressure x building width"""
+    return pressure(z) * B 
 
 #hollow rectangle sma
 
