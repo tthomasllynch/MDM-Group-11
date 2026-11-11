@@ -41,9 +41,9 @@ def Cp(z):
     """Pressure coefficient: rises to 0.8 at 75% height, then falls to 0.4 at the roof"""
     return np.where(
         z <= 0.75 * H,
-        0.40 + 0.40 * (z / (0.75 * H)),
+        0.40 + 0.40 * (z / (0.75 * H)) - (-0.3),
         0.80 - 0.40 * ((z - 0.75 * H) / (0.25 * H))
-    )
+    -(-0.3))
 
 def pressure(z):
     """Wind pressure p(z) in Pa"""
