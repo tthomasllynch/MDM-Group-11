@@ -30,7 +30,7 @@ V_REF = 8        # Measured wind speed at reference height (changes with differe
 H_REF = 10        # Reference height h1 (m)
 Z0 = 1.6          # Roughness length for urban skyscrapers (m)
 RHO = 1.225       # Air density (kg/m^3)
-GF = 0.887        # Gust factor
+GF = 1.12        # Gust factor
 
 def wind_speed(z):
     """Log wind profile: v(h2) = v(h1) * ln(h2/z0) / ln(h1/z0)"""
