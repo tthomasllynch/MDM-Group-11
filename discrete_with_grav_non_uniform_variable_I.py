@@ -23,7 +23,7 @@ V_REF = 8         # Wind speed at reference height [m/s]
 H_REF = 10        # Reference height (m)
 Z0 = 1.6          # Roughness length (m)
 RHO = 1.225       # Air density (kg/m^3)
-GF = 0.887        # Gust factor
+GF = 1.12        # Gust factor
 
 def wind_speed(z):
     """Log wind profile: v(z) = v_ref * ln(z/z0) / ln(h_ref/z0)"""
@@ -34,8 +34,8 @@ def Cp(z):
     """Pressure coefficient: rises to 0.8 at 75% height, falls to 0.4 at the roof"""
     return np.where(
         z <= 0.75 * H,
-        0.40 + 0.40 * (z / (0.75 * H)),
-        0.80 - 0.40 * ((z - 0.75 * H) / (0.25 * H))
+        0.40 + 0.40 * (z / (0.75 * H))-(-0.7),
+        0.80 - 0.40 * ((z - 0.75 * H) / (0.25 * H))-(-0.7)
     )
 
 def pressure(z):
