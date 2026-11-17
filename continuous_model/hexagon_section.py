@@ -1,15 +1,15 @@
 import math
 
 # BUILDING DIMENSIONS AND MATERIALS (same for every shape)
-H = 500
+H = 425.5  # 432 Park Avenue: Rafael Vinoly Architects (m).
 MU = 300000
 floor_area = 28.5**2
 # C50/60 mean tensile strength (Pa): Concrete Society, Basic properties.
 # https://www.concrete.org.uk/fingertips/basic-properties/
 c_tensile = 4.1e6
-E_c = 40e9
+E_c = 37e9
 E_s = 200e9
-rho = 0.02
+rho = 0.045
 E_RC = E_c*(1-rho) + E_s*rho
 
 # HOLLOW CENTRAL CORE: REINFORCED CONCRETE

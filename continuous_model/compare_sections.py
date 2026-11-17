@@ -1,6 +1,7 @@
 from scipy.integrate import solve_bvp
 import numpy as np 
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 import con_wind as CM
 import circle_section
@@ -15,6 +16,7 @@ y = np.zeros((4, len(z)))
 EI_HEX = hexagon_section.bending_stiffness()
 EI_SQU = park_avenue.bending_stiffness()
 EI_CIR = circle_section.bending_stiffness()
+
 
 def solve_section(section):
     solution = solve_bvp(
@@ -85,7 +87,7 @@ colours = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
 original_speed = CM.V_REF
 
 fig_speeds, axes_speeds = plt.subplots(
-    1, 3, figsize=(15, 7), sharex=True, sharey=True
+    1, 3, figsize=(12, 7), sharex=True, sharey=True
 )
 
 for ax, name, section, cracking in zip(
@@ -97,20 +99,40 @@ for ax, name, section, cracking in zip(
     for speed, colour in zip(reference_speeds, colours):
         CM.V_REF = speed
         wind_solution = solve_section(section)
-        if not wind_solution.success:
-            raise RuntimeError(f'{name}, {speed} m/s: {wind_solution.message}')
         bending = section.bending_stiffness() * wind_solution.sol(z)[2]
+        idx = np.argmax(np.abs(bending))
+        print(
+            f"{name}, reference wind {speed} m/s: "
+            f"maximum moment = {abs(bending[idx])/1e9:.3f} GN m "
+            f"at height {z[idx]:.2f} m"
+        )
         ax.plot(np.abs(bending) / 1e9, z, color=colour,
                 label=f'{speed} m/s')
 
+    moments = np.abs(bending)
+
+    # Moments scale with wind speed squared; scale to the first cracking point.
+    ratio = np.max(moments / cracking)
+    cracking_speed = speed / np.sqrt(ratio)
+    print(f"{name}: maximum moment at first cracking = "
+          f"{moments.max() / ratio / 1e9:.3f} GN m "
+          f"(reference wind {cracking_speed:.2f} m/s)\n")
+
     ax.plot(cracking / 1e9, z, '--', color='black', label='Cracking threshold')
-    ax.set_title(name)
-    ax.set_xlabel('Bending moment (GN m)')
+    ax.set_title(name, fontsize=24, pad=12)
+    ax.tick_params(axis='both', labelsize=18)
     ax.grid(True, alpha=0.3)
-    ax.legend(title='Reference wind speed')
 
 CM.V_REF = original_speed
-axes_speeds[0].set_ylabel('Height (m)')
-fig_speeds.suptitle(f'Wind speeds at reference height {CM.H_REF} m')
-fig_speeds.tight_layout()
+axes_speeds[0].set_ylabel('Height (m)', fontsize=22, labelpad=10)
+fig_speeds.supxlabel('Bending moment (GN m)', fontsize=22, y=0.19)
+fig_speeds.suptitle(f'Wind speeds at reference height {CM.H_REF} m', fontsize=21, y=0.99)
+handles, labels = axes_speeds[0].get_legend_handles_labels()
+fig_speeds.legend(handles, labels, loc='lower center',
+                  bbox_to_anchor=(0.5, 0.005), ncol=3,
+                  fontsize=17, frameon=False, columnspacing=1.8)
+fig_speeds.subplots_adjust(left=0.10, right=0.98, bottom=0.30,
+                           top=0.86, wspace=0.10)
+fig_speeds.savefig(Path(__file__).resolve().parent / 'comparingCS_with_WS.png',
+                    dpi=400, bbox_inches='tight', facecolor='white')
 plt.show()
