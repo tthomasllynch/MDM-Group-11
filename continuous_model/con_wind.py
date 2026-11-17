@@ -5,7 +5,7 @@ V_REF = 50       # Wind speed at H_REF (m/s).
 H_REF = 10      # Reference height (m).
 Z0 = 1.6        # Roughness length (m).
 RHO = 1.225     # Air density (kg/m^3).
-GF = 0.887      # Assumed gust factor.
+GF = 1.162     # Assumed gust factor.
 G = 9.81        # Gravity (m/s^2).
 
 
