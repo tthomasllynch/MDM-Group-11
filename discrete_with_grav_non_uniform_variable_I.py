@@ -23,7 +23,7 @@ V_REF = 8         # Wind speed at reference height [m/s]
 H_REF = 10        # Reference height (m)
 Z0 = 1.6          # Roughness length (m)
 RHO = 1.225       # Air density (kg/m^3)
-GF = 1.12        # Gust factor
+GF = 1.162        # Gust factor
 
 def wind_speed(z):
     """Log wind profile: v(z) = v_ref * ln(z/z0) / ln(h_ref/z0)"""
