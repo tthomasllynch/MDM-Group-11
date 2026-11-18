@@ -15,10 +15,10 @@ def wind_speed(z):
 
 
 def Cp(z, H):
-    """Assumed pressure coefficient profile, common to every shape."""
+    """Net pressure coefficient, including leeward suction of -0.7."""
     return np.where(z <= 0.75*H,
                     0.40 + 0.40*z/(0.75*H),
-                    0.80 - 0.40*(z-0.75*H)/(0.25*H))
+                    0.80 - 0.40*(z-0.75*H)/(0.25*H)) - (-0.7)
 
 
 def pressure(z, H):
